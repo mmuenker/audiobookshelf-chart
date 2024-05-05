@@ -1,6 +1,7 @@
 include:
   - local: .gitlab/ci/utilities/base.yaml
   - local: .gitlab/ci/pipelines/release-it.yaml
+  - local: .gitlab/ci/pipelines/update-app-version.yaml
   - local: .gitlab/ci/pipelines/build.yaml
     rules:
       - if: $RELEASE_IT == 'true'

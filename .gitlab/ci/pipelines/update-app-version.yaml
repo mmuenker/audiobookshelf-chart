@@ -1,0 +1,18 @@
+variables:
+  UPDATE_APP_VERSION:
+    value: "false"
+    options:
+      - "true"
+      - "false"
+    description: "Enable the update app version pipeline."
+
+update-app-version:
+  stage: build
+  image: alpine
+  before_script:
+    - apk add --no-cache jq curl git yq openssh-client
+    - sh ./tools/scripts/ci-setup-git-via-ssh.sh
+  script: sh ./tools/scripts/update-app-version.sh
+  rules:
+    - if: $UPDATE_APP_VERSION == 'true'
+      when: always
