@@ -1,0 +1,14 @@
+publish:
+  image: registry.gitlab.com/rxap/gitlab-ci/helm:latest
+  stage: deploy
+  before_script:
+    - helm plugin install https://github.com/chartmuseum/helm-push.git
+  script:
+    - mv dist/*.tgz .
+    - chart_archive_path=$(ls *.tgz)
+    - channel="release"
+    - if [[ "$CI_COMMIT_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-.*$ ]]; then channel="$(echo "$CI_COMMIT_TAG" | sed -n 's/.*-\([a-zA-Z]*\)\..*/\1/p')"; fi
+    - repo_url="${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/helm/${channel}"
+    - echo "Helm repo url ${repo_url}"
+    - helm repo add --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_PROJECT_NAME $repo_url
+    - helm cm-push $chart_archive_path $CI_PROJECT_NAME

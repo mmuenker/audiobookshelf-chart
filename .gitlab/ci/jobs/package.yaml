@@ -1,0 +1,10 @@
+package:
+  image: registry.gitlab.com/rxap/gitlab-ci/helm:latest
+  stage: build
+  script:
+    - helm package . -d dist
+  artifacts:
+    name: "${CI_COMMIT_REF_SLUG}_helm_package"
+    paths:
+      - dist
+    expire_in: 1 week

@@ -1,0 +1,6 @@
+include:
+  - local: .gitlab/ci/jobs/package.yaml
+  - local: .gitlab/ci/jobs/publish.yaml
+
+variables:
+  ENVIRONMENT_NAME: release/$CI_COMMIT_TAG

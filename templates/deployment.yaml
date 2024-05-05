@@ -1,0 +1,113 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "audiobookshelf.fullname" . }}
+  labels:
+    {{- include "audiobookshelf.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "audiobookshelf.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "audiobookshelf.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "audiobookshelf.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          env:
+            - name: TZ
+              value: {{ .Values.timezone }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: metadata
+              mountPath: /metadata
+          {{- range .Values.persistentVolumeClaims }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath }}
+              readOnly: {{ .readOnly }}
+          {{- end }}
+          {{- range .Values.nfs }}
+          {{- $nfs := . }}
+          {{- range .share }}
+            - name: {{ include "audiobookshelf.fullname" $ }}-{{ $nfs.name }}-{{ .name }}-pvc
+              mountPath: {{ .mountPath }}
+              readOnly: true
+          {{- end }}
+          {{- end }}
+          {{- with .Values.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      volumes:
+        - name: config
+        {{- if .Values.persistence.config.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.config.existingClaim | default (printf "%s-config" (include "audiobookshelf.fullname" .)) }}
+        {{- else }}
+          emptyDir: {}
+        {{- end }}
+        - name: metadata
+        {{- if .Values.persistence.metadata.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.metadata.existingClaim | default (printf "%s-metadata" (include "audiobookshelf.fullname" .)) }}
+        {{- else }}
+          emptyDir: {}
+        {{- end }}
+      {{- range .Values.persistentVolumeClaims }}
+        - name: {{ .name }}
+          persistentVolumeClaim:
+            claimName: {{ .name }}
+      {{- end }}
+      {{- range .Values.nfs }}
+      {{- $nfs := . }}
+      {{- range .share }}
+        - name: {{ include "audiobookshelf.fullname" $ }}-{{ $nfs.name }}-{{ .name }}-pvc
+          persistentVolumeClaim:
+            claimName: {{ include "audiobookshelf.fullname" $ }}-{{ $nfs.name }}-{{ .name }}-pvc
+      {{- end }}
+      {{- end }}
+      {{- with .Values.volumes }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

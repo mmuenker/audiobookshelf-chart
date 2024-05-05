@@ -1,0 +1,17 @@
+apiVersion: v2
+name: audiobookshelf
+description: A Helm chart for Audiobookshelf
+type: application
+version: 0.0.0
+appVersion: "2.9.0"
+home: https://gitlab.com/mmuenker/audiobookshelf-chart
+keywords:
+  - audiobookshelf
+sources:
+  - https://gitlab.com/mmuenker/audiobookshelf-chart
+  - https://github.com/advplyr/audiobookshelf
+maintainers:
+  - name: Merzough Münker
+    email: mmuenker@digitaix.com
+    url: https://gitlab.com/mmuenker
+icon: https://www.audiobookshelf.org/Logo.png

@@ -1,0 +1,44 @@
+{{- range .Values.nfs }}
+{{- $nfs := . }}
+{{- range .share }}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ include "audiobookshelf.fullname" $ }}-{{ $nfs.name }}-{{ .name }}-pv
+  labels:
+    {{- include "audiobookshelf.labels" $ | nindent 4 }}
+{{- with $.Values.persistence.config.annotations  }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+spec:
+  capacity:
+    storage: {{ $nfs.storage }}
+  accessModes:
+    - ReadOnlyMany
+  nfs:
+    path: {{ .path }}
+    server: {{ $nfs.server }}
+  persistentVolumeReclaimPolicy: Retain
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "audiobookshelf.fullname" $ }}-{{ $nfs.name }}-{{ .name }}-pvc
+  labels:
+    {{- include "audiobookshelf.labels" $ | nindent 4 }}
+{{- with $.Values.persistence.config.annotations  }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+spec:
+  volumeName: {{ include "audiobookshelf.fullname" $ }}-{{ $nfs.name }}-{{ .name }}-pv
+  storageClassName: ""
+  accessModes:
+    - ReadOnlyMany
+  resources:
+    requests:
+      storage: {{ $nfs.storage }}
+---
+{{- end }}
+{{- end }}
