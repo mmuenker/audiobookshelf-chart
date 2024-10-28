@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.2-nightly.14](https://gitlab.com/mmuenker/audiobookshelf-chart/compare/v0.0.2-nightly.13...v0.0.2-nightly.14) (2024-10-28)
+
+
+### Bug Fixes
+
+* update app version to 2.16.0 ([9a5fda0](https://gitlab.com/mmuenker/audiobookshelf-chart/commit/9a5fda050c900654abd6fa45907d3ad309510834))
+
 ## [0.0.2-nightly.13](https://gitlab.com/mmuenker/audiobookshelf-chart/compare/v0.0.2-nightly.12...v0.0.2-nightly.13) (2024-10-19)
 
 
