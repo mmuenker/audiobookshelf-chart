@@ -3,7 +3,7 @@ name: audiobookshelf
 description: A Helm chart for Audiobookshelf
 type: application
 version: 0.0.2-nightly.23
-appVersion: "2.17.6"
+appVersion: "2.17.7"
 home: https://gitlab.com/mmuenker/audiobookshelf-chart
 keywords:
   - audiobookshelf
