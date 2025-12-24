@@ -2,7 +2,7 @@ apiVersion: v2
 name: audiobookshelf
 description: A Helm chart for Audiobookshelf
 type: application
-version: 0.0.2-nightly.48
+version: 0.0.2-nightly.49
 appVersion: "2.32.1"
 home: https://gitlab.com/mmuenker/audiobookshelf-chart
 keywords:
