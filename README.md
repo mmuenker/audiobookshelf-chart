@@ -35,8 +35,8 @@ If required the version of the Audiobookshelf image can be overridden by setting
 
 ```yaml
 image:
-  repository: ghcr.io/audiobookshelf/audiobookshelf
-  tag: 9.8.7
+  repository: ghcr.io/advplyr/audiobookshelf
+  tag: 2.32.1
   pullPolicy: IfNotPresent
 ```
 
